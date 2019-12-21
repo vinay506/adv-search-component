@@ -1,0 +1,77 @@
+<div class="adv-search-container">
+    <div class="search-container">
+        <span *ngIf="searchCriteria.length > 0" class="status-circle" [ngClass]="{'correct-mark backgroud-green': statusOfSearchCriteria, 'error-mark backgroud-red': !statusOfSearchCriteria }"></span>
+        <textarea spellcheck="false" id="search-area" [ngClass]="{'adjustPadding':searchCriteria.length === 0, 'color-red' : !statusOfSearchCriteria}"
+        (keydown)="keyDownOnSearchArea($event)" (keyup)="keyUpOnSearchArea($event)" autocomplete="off" (paste)="pasteOnSearchArea()"
+            class="search-entry advanced-search ajs-dirty-warning-exempt" [(ngModel)]="searchCriteria"></textarea>
+        <i *ngIf="searchCriteria.length == 0 ||  statusOfSearchCriteria" class="fa fa-search" aria-hidden="true" (click)="clickedOnSearchCriteria()"></i>
+        <i *ngIf="searchCriteria.length != 0 && !statusOfSearchCriteria" class="fa fa-times" aria-hidden="true" (click)="clickedOnClearCriteria()"></i>
+    </div>
+    <div id="suggestionBoxContainer" class="suggestion-list-box">
+        <div *ngIf="showSuggestionBox && suggestionList.length > 0" class="suggestion-list-latest">
+            <li id="suggestion-list-element" *ngFor="let col of suggestionList" (click)="selectListElement(col)" title="{{col.displayName}}">
+                {{col.displayName}}
+            </li>
+        </div>
+        <div *ngIf="showValueBox" class="show-value-box">
+            <div [ngSwitch]="typeOfValue">
+                <div *ngSwitchCase="text">
+                    <input [(ngModel)]="searchObj[columnKey]" (keyup)="submitValueOnEnter($event)">
+                </div>
+                <div *ngSwitchCase="number">
+                    <input [(ngModel)]="searchObj[columnKey]" (keyup)="submitValueOnEnter($event)">
+                </div>
+                <div *ngSwitchCase="timestamp">
+                    <div *ngIf="typeOfArithemeticOperator != 'between' && typeOfArithemeticOperator != 'NT_bw'">
+                        <input type='date' [(ngModel)]="searchObj[columnKey]" (ngModelChange)="formateDateObj($event)">
+                    </div>
+                    <div *ngIf="typeOfArithemeticOperator == 'between' || typeOfArithemeticOperator == 'NT_bw'">
+                        <div>
+                            From
+                        </div>
+                        <div>
+                            <input type='date' [(ngModel)]="searchObj[columnKey + '-From']" (ngModelChange)="formateDateObj($event,'-From')">
+                        </div>
+                        <div>
+                            To
+                        </div>
+                        <div>
+                            <input type='date' [(ngModel)]="searchObj[columnKey + '-To']" min="{{searchObj[columnKey + '-From']}}" (ngModelChange)="formateDateObj($event,'-To')">
+                        </div>
+                    </div>
+                </div>
+                <div *ngSwitchCase="between">
+                    <div *ngIf="typeOfArithemeticOperator != 'between' && typeOfArithemeticOperator != 'NT_bw'">
+                        <input [(ngModel)]="searchObj[columnKey]" (keyup)="allowNumaricsOnly($event)">
+                    </div>
+                    <div *ngIf="typeOfArithemeticOperator == 'between' || typeOfArithemeticOperator == 'NT_bw'">
+                        <div>
+                            From
+                        </div>
+                        <div>
+                            <input [(ngModel)]="searchObj[columnKey + '-From']" (keyup)="allowNumaricsOnly($event,'-From')">
+                        </div>
+                        <div>
+                            To
+                        </div>
+                        <div>
+                            <input [(ngModel)]="searchObj[columnKey + '-To']" (keyup)="allowNumaricsOnly($event,'-To')">
+                        </div>
+                    </div>
+                </div>
+                <div *ngSwitchCase="dropdown">
+                    <div class="list-group drop-down-list">
+                        <a href="javascript:void(0)" class="list-group-item" *ngFor="let item of listOfLookUpValues" (click)="selectedSuggestionLookup(item)">
+                            <input type="checkbox" [ngValue]="item.selected" [checked]="item.selected">
+                            <span>{{item.value}}</span>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn submit-value" (click)="saveValue($event)">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

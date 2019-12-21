@@ -1,0 +1,42 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "adv-search-lib": {
+      "projectType": "library",
+      "root": "projects/adv-search-lib",
+      "sourceRoot": "projects/adv-search-lib/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/adv-search-lib/tsconfig.lib.json",
+            "project": "projects/adv-search-lib/ng-package.json"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/adv-search-lib/src/test.ts",
+            "tsConfig": "projects/adv-search-lib/tsconfig.spec.json",
+            "karmaConfig": "projects/adv-search-lib/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/adv-search-lib/tsconfig.lib.json",
+              "projects/adv-search-lib/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }},
+  "defaultProject": "adv-search-lib"
+}
