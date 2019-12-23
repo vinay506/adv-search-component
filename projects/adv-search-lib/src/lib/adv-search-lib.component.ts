@@ -11,6 +11,7 @@ export class AdvSearchLibComponent implements OnInit {
 
   @Input() lookupConfig: any;
   @Output() submitAdvsearch = new EventEmitter();
+  @Input() jsonObj:any;
 
   showSuggestionBox = false;
   suggestionList = [];
@@ -86,7 +87,7 @@ export class AdvSearchLibComponent implements OnInit {
 
   /** adds the click event on  docuement */
   addEventOnDocument() {
-    $document.click(() => (e) {
+    window.document['click'](() => (e) {
       this.suggetionListClickOff(e);
     });
   }
@@ -97,8 +98,8 @@ export class AdvSearchLibComponent implements OnInit {
       return (item === 'suggestion-list-box' || item === 'show-value-box');
     });
     if (array.length === 0) {
-      this.updatethisVar('showSuggestionBox', false);
-      this.updatethisVar('showValueBox', false);
+      this.showSuggestionBox = false;
+      this.showValueBox = false;
     }
 
   }
@@ -121,22 +122,6 @@ export class AdvSearchLibComponent implements OnInit {
     list = [...list];
     return list;
   }
-
-
-  /**  apply the digestion cycle to a provided this variable */
-  updatethisVar(thisvar, value) {
-    this.$apply(function () {
-      if (thisvar) {
-        this.assignthisVar(thisvar, value);
-      }
-    });
-  }
-
-  /** updates the this variables */
-  assignthisVar(thisVar, value) {
-    this[thisVar] = value;
-  }
-
 
   /** loads all lookup values  */
   loadAllLookUpValues() {
@@ -192,11 +177,11 @@ export class AdvSearchLibComponent implements OnInit {
       let payload = {
         query: criteriaForPayload
       }
-      this.submitAdvsearch(payload, criteria);
+      this.submitAdvsearch.emit({payload, criteria});
     } else if (!this.searchCriteria) {
-      toastservice.error(this.plsEnterCriteria);
+      console.log(this.plsEnterCriteria);
     } else {
-      toastservice.error(this.plsEnterValidCriteria);
+      console.log(this.plsEnterValidCriteria);
     }
   }
 
@@ -308,7 +293,7 @@ export class AdvSearchLibComponent implements OnInit {
     this.validateSearchCriteria();
   }
 
-  getCurrentWordInformation(action) {
+  getCurrentWordInformation(action?:any) {
     let obj = {};
     obj['words'] = this.getWordsUptoCurrentPosition();
     obj['wordsMetaData'] = this.getMetaDataOfWords(obj['words']);
@@ -343,7 +328,7 @@ export class AdvSearchLibComponent implements OnInit {
         let obj = list.find(listItem => {
           return (listItem.type === type);
         });
-        if (angular.isArray(obj.next)) {
+        if (Array.isArray(obj.next)) {
           type = (word == '(' || word == ')') ? obj.next[1] : obj.next[0];
         } else {
           type = obj.next;
@@ -362,7 +347,7 @@ export class AdvSearchLibComponent implements OnInit {
     return array;
   }
 
-  getMetaDataOfWord(word, type, dataType) {
+  getMetaDataOfWord(word, type, dataType?:any) {
     let obj;
     if (type === 'value') {
       obj = { name: word, type: type, dataType: dataType }
@@ -407,7 +392,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   actionsBasedOnEvent(event) {
-    this.displaySuggestionBox(event);
+    this.displaySuggestionBox();
   }
 
   displaySuggestionBox() {
@@ -432,7 +417,7 @@ export class AdvSearchLibComponent implements OnInit {
     let searchArea = this.getElementById(id);
     let innerText = '';
     if (searchArea) {
-      innerText = searchArea.value;
+      innerText = searchArea['value'];
     }
     return innerText;
   }
@@ -456,7 +441,7 @@ export class AdvSearchLibComponent implements OnInit {
     return element;
   }
 
-  searchBasedOnWord(word, typOfAction) {
+  searchBasedOnWord(word, typOfAction?:any) {
     if (word) {
       this.setListTypeBasedCurrentPosition(word, typOfAction)
     } else {
@@ -725,7 +710,7 @@ export class AdvSearchLibComponent implements OnInit {
     }
   }
 
-  emptyTheSearchModel(str) {
+  emptyTheSearchModel(str?:any) {
     str = (str) ? str : '';
     if (this.searchObj[this.columnKey + str]) {
       this.searchObj[this.columnKey + str] = '';
@@ -845,7 +830,7 @@ export class AdvSearchLibComponent implements OnInit {
     if (this.currentWordInfo['lastAction'] === 'Space') {
       let value = this.getFormatedValue();
       if (!value) {
-        toastservice.error(this.plsEnterValue);
+        console.log(this.plsEnterValue);
         return false;
       }
       this.currentWordInfo['words'].push(value);
@@ -859,19 +844,19 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   updateSearchCriteriaWithValue() {
-    let length = this.currentWordInfo.words.length;
+    let length = this.currentWordInfo['words'].length;
     let words = this.getPreviousWords(this.searchCriteria);
     words.splice(0, length - 1);
-    let totalWords = this.currentWordInfo.words.concat(words);
+    let totalWords = this.currentWordInfo['words'].concat(words);
     this.searchCriteria = totalWords.join(' ');
   }
 
   /** updates current object with formated value   */
   getFormatedValue() {
     let value = this.searchObj[this.columnKey] || '';
-    if (value && angular.isArray(value)) {
+    if (value && Array.isArray(value)) {
       value = '(' + value.join(',') + ')';
-    } else if (checkForRangeValues()) {
+    } else if (this.checkForRangeValues()) {
       value = this.getValueForRangeType();
     }
     return value
@@ -1092,7 +1077,7 @@ export class AdvSearchLibComponent implements OnInit {
       return (listItem.type === type);
     });
     let flag;
-    if (angular.isArray(obj.next)) {
+    if (Array.isArray(obj.next)) {
       let text = obj.next.find(item => {
         return (item === nextType);
       })
@@ -1112,7 +1097,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
 
-  placeCaretAtEnd(str) {
+  placeCaretAtEnd(str?:any) {
     let searchArea = this.getElementById('search-area');
     var CaretPos = 0;
     // IE Support
