@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import suggetions from './suggestions';
-const jsonObj = suggetions();
+// import suggetions from './suggestions';
+// const this.jsonobj = suggetions();
 
 @Component({
   selector: 'lib-adv-search-lib',
@@ -11,7 +11,7 @@ export class AdvSearchLibComponent implements OnInit {
 
   @Input() lookupConfig: any;
   @Output() submitAdvsearch = new EventEmitter();
-  @Input() jsonObj:any;
+  @Input() jsonobj:any;
 
   showSuggestionBox = false;
   suggestionList = [];
@@ -33,61 +33,20 @@ export class AdvSearchLibComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    if (this.lookupConfig) {
-      this.loadAllLookUpValues();
-    }
-    this.loadColumnsSuggestionBox();
+    // if (this.lookupConfig) {
+    //   this.loadAllLookUpValues();
+    // }
+    // this.loadColumnsSuggestionBox();
     this.addEventOnDocument();
     this.addKeydownEventOnDocument();
   }
 
 
-  /** preparing columns list to display in suggestion list */
-  loadColumnsSuggestionBox() {
-    // let url = '/api/column-list';
-    // advancedSearchService.getApiCall(url, function (response) {
-    let response = [];
-    this.prepareSuggestionColumnsObj(response);
-    // });
-
-  }
-
-  /** preparing columns list to display in suggestion list */
-  prepareSuggestionColumnsObj(response) {
-    let obj = this.getParanthesisObjTemplate();
-    jsonObj.column = response;
-    jsonObj.column = jsonObj.column.map(col => {
-      let obj = {
-        key: col.inventoryColumn,
-        columnDataType: col.columnDataType,
-        displayName: col.columnDisplayName,
-        type: 'column',
-        name: this.formateListItem(col.columnDisplayName),
-        strLength: col.columnDisplayName.length
-      }
-      return obj;
-    });
-    jsonObj.column.unshift(obj);
-  }
-
-
-
-  /** returns the templte of start parantheses in suggestion list */
-  getParanthesisObjTemplate() {
-    let obj = {
-      key: '(',
-      typeOfParanthesis: 'start',
-      displayName: '(',
-      name: '(',
-      isClosed: false,
-      type: 'paranthesis'
-    }
-    return obj;
-  }
+ 
 
   /** adds the click event on  docuement */
   addEventOnDocument() {
-    window.document['click'](() => (e) {
+    window.document['click']((e)=> {
       this.suggetionListClickOff(e);
     });
   }
@@ -124,18 +83,18 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   /** loads all lookup values  */
-  loadAllLookUpValues() {
-    this.lookupConfig.forEach(config => {
-      this.apiCallToLookUpValues(config);
-    });
-  }
+  // loadAllLookUpValues() {
+  //   this.lookupConfig.forEach(config => {
+  //     this.apiCallToLookUpValues(config);
+  //   });
+  // }
 
-  /**api call for lookup values  */
-  apiCallToLookUpValues(config) {
-    advancedSearchService.getApiCall(config.queryparam, function (response) {
-      this[config.column] = response[config.dataKey];
-    });
-  }
+  // /**api call for lookup values  */
+  // apiCallToLookUpValues(config) {
+  //   advancedSearchService.getApiCall(config.queryparam, function (response) {
+  //     this[config.column] = response[config.dataKey];
+  //   });
+  // }
 
   pasteOnSearchArea() {
     this.setHeightOfSearchArea();
@@ -199,42 +158,9 @@ export class AdvSearchLibComponent implements OnInit {
         searchCriteriaList.push(key);
       }
     });
-    searchCriteriaList = this.checkWithLatAndLangCols(searchCriteriaList);
+    // searchCriteriaList = this.checkWithLatAndLangCols(searchCriteriaList);
     let targetCriteria = searchCriteriaList.join(' ');
     return targetCriteria;
-  }
-
-  checkWithLatAndLangCols(searchCriteriaList) {
-    searchCriteriaList.forEach((word, index) => {
-      let flag = this.isLatLang(word);
-      let nextFlag = this.checkWithNextLatLangValue(index, searchCriteriaList)
-      if (flag && nextFlag) {
-        let col1 = searchCriteriaList[index];
-        let col2 = searchCriteriaList[index + 4];
-        let logicalOperator = searchCriteriaList[index + 3];
-        if (col1 != col2 && logicalOperator === '&&') {
-          searchCriteriaList[index + 3] = '||'
-        }
-      }
-    });
-    return searchCriteriaList;
-  }
-
-  checkWithNextLatLangValue(index, searchAndFindTypeOfList) {
-    let str = searchAndFindTypeOfList[index + 4];
-    if (!str) { return false }
-    let flag = this.isLatLang(str);
-    return flag;
-  }
-
-  isLatLang(str) {
-    if (!str) { return false; }
-    let arr = ['locationLAT', 'locationLONG'];
-    let index = arr.findIndex(listItem => {
-      return listItem.toLowerCase() === str.toLowerCase();
-    });
-    let flag = (index != -1) ? true : false;
-    return flag;
   }
 
   getFormatedValueForAPI(word, index, words) {
@@ -287,7 +213,7 @@ export class AdvSearchLibComponent implements OnInit {
     this.validateSearchCriteria();
   }
 
-  handleActionOnSpace() {
+  handleActionOnSpace(e) {
     this.currentWordInfo = this.getCurrentWordInformation('Space');
     this.searchBasedOnWord(this.currentWordInfo['currentWord'], 'Space');
     this.validateSearchCriteria();
@@ -354,7 +280,7 @@ export class AdvSearchLibComponent implements OnInit {
     } else if (type === 'startParanthesis' || type === 'endParanthesis') {
       obj = { name: word, type: type }
     } else {
-      let arr = jsonObj[type];
+      let arr = this.jsonobj[type];
       obj = arr.find(item => {
         return (this.getLowerCaseValue(item.name) === this.getLowerCaseValue(word));
       });
@@ -445,7 +371,7 @@ export class AdvSearchLibComponent implements OnInit {
     if (word) {
       this.setListTypeBasedCurrentPosition(word, typOfAction)
     } else {
-      this.suggestionList = jsonObj['column'];
+      this.suggestionList = this.jsonobj['column'];
     }
   }
 
@@ -676,7 +602,7 @@ export class AdvSearchLibComponent implements OnInit {
     if (type === 'arithmeticOperator') {
       this.setArithmeticOperatorList(type, typOfAction);
     } else {
-      this.suggestionList = jsonObj[type] || [];
+      this.suggestionList = this.jsonobj[type] || [];
     }
   }
 
@@ -729,13 +655,13 @@ export class AdvSearchLibComponent implements OnInit {
     let columnInfo = this.getDataTypeOfColumn(typeOfAction);
     let arOperatorList;
     if (columnInfo) {
-      arOperatorList = (jsonObj[type] || []).filter(obj => {
+      arOperatorList = (this.jsonobj[type] || []).filter(obj => {
         let colDataType = this.getColDataType(columnInfo);
         let index = obj.allowedTo.indexOf(colDataType);
         return (index === -1) ? false : true;
       });
     }
-    this.suggestionList = (arOperatorList && arOperatorList.length > 0) ? arOperatorList : jsonObj[type];
+    this.suggestionList = (arOperatorList && arOperatorList.length > 0) ? arOperatorList : this.jsonobj[type];
   }
 
   /** returns the column type in current obj */
@@ -757,7 +683,7 @@ export class AdvSearchLibComponent implements OnInit {
       lastItem = words[length - 2];
     }
 
-    let columnInfo = jsonObj['column'].find((col) => {
+    let columnInfo = this.jsonobj['column'].find((col) => {
       return (this.getLowerCaseValue(col.name) === this.getLowerCaseValue(lastItem))
     });
 
@@ -980,7 +906,7 @@ export class AdvSearchLibComponent implements OnInit {
 
   validateValue(word, isValidSeachCriteria) {
     if (isValidSeachCriteria && word && word.type === 'value') {
-      const flag = jsonObj.restrictedKeys.some(str => {
+      const flag = this.jsonobj.restrictedKeys.some(str => {
         const index = (word.name || '').indexOf(str);
         return (index !== -1)
       })
@@ -1012,7 +938,7 @@ export class AdvSearchLibComponent implements OnInit {
       if (type === 'arithmeticOperator') {
         isValidSeachCriteria = this.isValidArithmeticOperator(wordsMetaData, index)
       } else if (type === 'logicalOperator') {
-        let arr = jsonObj[type];
+        let arr = this.jsonobj[type];
         isValidSeachCriteria = this.isExist(arr, word.name, 'name');
       }
     }
@@ -1036,7 +962,7 @@ export class AdvSearchLibComponent implements OnInit {
     let str = word.name;
     let col = wordsMetaData[index - 1];
     let colDataType = col.columnDataType;
-    let list = jsonObj[type];
+    let list = this.jsonobj[type];
     let obj = this.getMatchedValue(list, str, 'name');
     let flag = (obj) ? true : false;
     if (flag) {
