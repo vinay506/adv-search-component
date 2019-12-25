@@ -727,7 +727,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   /** formates the date obj and update with search obj  */
-  formateDateObj(event, type) {
+  formateDateObj(event, type?:any) {
     if (!type) {
       type = '';
     }
@@ -817,7 +817,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   /**  allows only numaric only on key up */
-  allowNumaricsOnly(event, type) {
+  allowNumaricsOnly(event, type?:any) {
     let value;
     if (!type) {
       type = '';

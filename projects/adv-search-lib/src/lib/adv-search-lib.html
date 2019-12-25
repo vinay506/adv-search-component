@@ -15,13 +15,13 @@
         </div>
         <div *ngIf="showValueBox" class="show-value-box">
             <div [ngSwitch]="typeOfValue">
-                <div *ngSwitchCase="text">
+                <div *ngSwitchCase="'text'">
                     <input [(ngModel)]="searchObj[columnKey]" (keyup)="submitValueOnEnter($event)">
                 </div>
-                <div *ngSwitchCase="number">
+                <div *ngSwitchCase="'number'">
                     <input [(ngModel)]="searchObj[columnKey]" (keyup)="submitValueOnEnter($event)">
                 </div>
-                <div *ngSwitchCase="timestamp">
+                <div *ngSwitchCase="'timestamp'">
                     <div *ngIf="typeOfArithemeticOperator != 'between' && typeOfArithemeticOperator != 'NT_bw'">
                         <input type='date' [(ngModel)]="searchObj[columnKey]" (ngModelChange)="formateDateObj($event)">
                     </div>
@@ -40,7 +40,7 @@
                         </div>
                     </div>
                 </div>
-                <div *ngSwitchCase="between">
+                <div *ngSwitchCase="'between'">
                     <div *ngIf="typeOfArithemeticOperator != 'between' && typeOfArithemeticOperator != 'NT_bw'">
                         <input [(ngModel)]="searchObj[columnKey]" (keyup)="allowNumaricsOnly($event)">
                     </div>
@@ -59,10 +59,10 @@
                         </div>
                     </div>
                 </div>
-                <div *ngSwitchCase="dropdown">
+                <div *ngSwitchCase="'dropdown'">
                     <div class="list-group drop-down-list">
                         <a href="javascript:void(0)" class="list-group-item" *ngFor="let item of listOfLookUpValues" (click)="selectedSuggestionLookup(item)">
-                            <input type="checkbox" [ngValue]="item.selected" [checked]="item.selected">
+                            <input type="checkbox" [value]="item.selected" [checked]="item.selected">
                             <span>{{item.value}}</span>
                         </a>
                     </div>
