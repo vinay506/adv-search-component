@@ -5,11 +5,11 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'lib-adv-search-lib',
   templateUrl: './adv-search-lib.html',
-  styles: ['./adv-search-lib.scss']
+  styleUrls : ['./adv-search-lib.scss']
 })
 export class AdvSearchLibComponent implements OnInit {
 
-  @Input() lookupConfig: any;
+  @Input() lookupConfig: any; 
   @Output() submitAdvsearch = new EventEmitter();
   @Input() jsonobj:any;
 
@@ -46,9 +46,7 @@ export class AdvSearchLibComponent implements OnInit {
 
   /** adds the click event on  docuement */
   addEventOnDocument() {
-    window.document['click']((e)=> {
-      this.suggetionListClickOff(e);
-    });
+    document.onclick = (event) => { this.suggetionListClickOff(event) }
   }
 
   suggetionListClickOff(event) {
@@ -489,11 +487,11 @@ export class AdvSearchLibComponent implements OnInit {
 
   /** adds the keydown event on  docuement */
   addKeydownEventOnDocument() {
-    document['keydown']((event) => {
+    document.onkeydown = (event) => {
       if (event.which == 38 || event.which == 40) {
         this.handleArrowKeysOnList(event);
       }
-    });
+    };
   }
 
   handleArrowKeysOnList(event) {
@@ -1028,14 +1026,15 @@ export class AdvSearchLibComponent implements OnInit {
     var CaretPos = 0;
     // IE Support
 
-    if (document['selection']) {
-      searchArea.focus();
-      var Sel = document['selection'].createRange();
-      Sel.moveStart('character', searchArea['selectionStart']);
-      CaretPos = Sel.text.length;
-    }
+    // if (document['selection']) {
+    //   searchArea.focus();
+    //   var Sel = document['selection'].createRange();
+    //   Sel.moveStart('character', searchArea['selectionStart']);
+    //   CaretPos = Sel.text.length;
+    // }
     // Firefox support
-    else if (searchArea['selectionStart'] || searchArea['selectionStart'] == '0')
+    // else 
+    if (searchArea['selectionStart'] || searchArea['selectionStart'] == '0')
       CaretPos = this.getCurrentWordText(str).length || searchArea['selectionStart'];
 
     //update The cursor position 
