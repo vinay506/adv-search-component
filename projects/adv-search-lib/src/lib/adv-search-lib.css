@@ -12,7 +12,6 @@
   }
   
   .adv-search-box {
-    // width: 95%;
     height: 40px;
     padding-right: 5%;
     padding-left: 1%;
@@ -80,7 +79,6 @@
   
   .padding-l-r{
     padding-right: 4px;
-    // padding-left: 2px;
   }
   
   
@@ -124,23 +122,22 @@
   ====================================================================================================
   
   */
-  .adv-search-container{
-    .color-red{
+    .adv-search-container .color-red{
       color: rgb(255, 0, 0) !important;
     }
   
-    .search-container{
+    .adv-search-container .search-container{
       position: relative;
       margin-top: 10px;
     }
   
-    .adv-txt-area{
+    .adv-search-container .adv-txt-area{
       width: 95%;
       margin-top: 5px;
       margin-bottom: 10px;
     }
   
-    .search-container textarea {
+    .adv-search-container .search-container textarea {
       padding: 4px 7px 5px;
       overflow: hidden;
       font-size: 14px;
@@ -160,7 +157,7 @@
       outline: 0;
     }
   
-    .search-container .search-entry {
+    .adv-search-container .search-container .search-entry {
       box-sizing: border-box;
       display: table-row;
       width: 100%;
@@ -171,7 +168,7 @@
       caret-color: #000;
     }
   
-    .suggestion-list-latest{
+    .adv-search-container .suggestion-list-latest{
       position: absolute;
       z-index: 1000;
       display: flex;
@@ -186,7 +183,7 @@
       box-shadow: 1px -1px 3px #808080 inset;
     }
   
-    .show-value-box{
+    .adv-search-container .show-value-box{
       position: absolute;
       z-index: 1000;
       display: flex;
@@ -200,7 +197,7 @@
       box-shadow: 1px -1px 3px #808080 inset;
     }
   
-    .suggestion-list-latest li {
+    .adv-search-container .suggestion-list-latest li {
       display: block;
       padding-top: 5px;
       padding-bottom: 5px;
@@ -208,37 +205,37 @@
       cursor: pointer;
     }
   
-    .suggestion-list-latest li:hover {
+    .adv-search-container .suggestion-list-latest li:hover {
       cursor: pointer;
       background: #d3d3d3;
     }
   
-    .search-container .fa-search,
-    .search-container .fa-times {
+    .adv-search-container .search-container .fa-search,
+    .adv-search-container .search-container .fa-times {
       position: absolute;
       top: 15%;
       right: 15px;
     }
   
-    .search-container #search-area{
+    .adv-search-container .search-container #search-area{
       padding-right: 30px;
       padding-left: 30px;
     }
   
   
-    .correct-mark::before  {
+    .adv-search-container .correct-mark::before  {
       font-size: 14px;
       color: #fff;
       content: "\2714";
     }
   
-    .error-mark::before {
+    .adv-search-container .error-mark::before {
       font-size: 14px;
       color: #fff;
       content: "\2716";
     }
   
-    .status-circle {
+    .adv-search-container .status-circle {
       position: absolute;
       top: 4px;
       left: 4px;
@@ -250,17 +247,17 @@
       border-radius: 50%;
     }
   
-    .adjustPadding{
+    .adv-search-container .adjustPadding{
       padding-left: 2px !important;
     }
   
-    .backgroud-green{
+    .adv-search-container .backgroud-green{
       background: #008000;
     }
   
   
-    .backgroud-red{
+    .adv-search-container .backgroud-red{
       background: #f00;
     }
-  }
+  
   

@@ -112,6 +112,22 @@ export default function suggetions() {
             type: 'arithmeticOperator',
             strLength:8,
             hasQuotes:true
+        },{
+            key: 'IS',
+            displayName: 'Is',
+            name:'Is',
+            allowedTo: ['text', 'number'],
+            type: 'arithmeticOperator',
+            strLength:10,
+            hasQuotes:true
+        },{
+            key: 'IS_NOT',
+            displayName: 'Is Not',
+            name:'"Is Not"',
+            allowedTo: ['text', 'number'],
+            type: 'arithmeticOperator',
+            strLength:10,
+            hasQuotes:true
         }],
         'logicalOperator': [
             {
@@ -135,7 +151,10 @@ export default function suggetions() {
             type: 'logicalOperator',
             strLength:2
         }],
-        'restrictedKeys':['!','@','#','$','%','^','&','*','=','_',';','<','>','?','`','~','like','not','in','between','>=','<=','<','>','==','!=']
+        'restrictedKeys':{
+          keys:  ['!','@','#','$','%','^','&','*','=',';','<','>','?','`','~','>=','<=','<','>','==','!='],
+          operators:['like','not','in','between']
+        }
     }
     return obj;
 }

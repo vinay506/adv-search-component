@@ -1,17 +1,16 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-// import suggetions from './suggestions';
-// const this.jsonobj = suggetions();
+
 
 @Component({
   selector: 'lib-adv-search-lib',
   templateUrl: './adv-search-lib.html',
-  styleUrls : ['./adv-search-lib.scss']
+  styleUrls: ['./adv-search-lib.css']
 })
 export class AdvSearchLibComponent implements OnInit {
 
-  @Input() lookupConfig: any; 
+  @Input() lookupConfig: any;
   @Output() submitAdvsearch = new EventEmitter();
-  @Input() jsonobj:any;
+  @Input() jsonobj: any;
 
   showSuggestionBox = false;
   suggestionList = [];
@@ -42,7 +41,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
 
- 
+
 
   /** adds the click event on  docuement */
   addEventOnDocument() {
@@ -131,10 +130,13 @@ export class AdvSearchLibComponent implements OnInit {
     if (this.searchCriteria && this.statusOfSearchCriteria) {
       let criteria = this.searchCriteria.trim();
       let criteriaForPayload = this.getPayloadOfAdvSearch(criteria);
+      var nullRegex = new RegExp("'null'", "g");
+      criteriaForPayload = criteriaForPayload.replace(nullRegex, "null");
+      criteriaForPayload = criteriaForPayload.replace("''", '');
       let payload = {
         query: criteriaForPayload
       }
-      this.submitAdvsearch.emit({payload, criteria});
+      this.submitAdvsearch.emit({ payload, criteria });
     } else if (!this.searchCriteria) {
       console.log(this.plsEnterCriteria);
     } else {
@@ -165,11 +167,16 @@ export class AdvSearchLibComponent implements OnInit {
     let value = word.name;
     let arOperator = words[index - 1];
     if (arOperator.key === 'like' || arOperator.key === 'N_Lk') {
+      if (this.isAlreadyQuoted(value)) {
+        const length = value.length;
+        value = value.substring(1, length - 1);
+      }
       value = `%${value}%`;
     }
     value = this.updateWithQuotesToValue(value, arOperator);
     return value;
   }
+
 
   /** formates the value of current obj */
   updateWithQuotesToValue(val, arOperator) {
@@ -178,10 +185,21 @@ export class AdvSearchLibComponent implements OnInit {
     if (flag) {
       value = this.getQuotedText(val);
       value = this.checkWithBetweenOperator(value, arOperator);
+    } else if (this.isAlreadyQuoted(val)) {
+      const length = val.length;
+      value = val.substring(1, length - 1);
+      value = "'" + value + "'";
     } else {
       value = "'" + val + "'";
     }
     return value;
+  }
+
+  isAlreadyQuoted(val) {
+    if (val.startsWith('"') || val.startsWith("'")) {
+      return true;
+    }
+    return false;
   }
 
   checkWithBetweenOperator(val, arOperator) {
@@ -217,7 +235,7 @@ export class AdvSearchLibComponent implements OnInit {
     this.validateSearchCriteria();
   }
 
-  getCurrentWordInformation(action?:any) {
+  getCurrentWordInformation(action?: any) {
     let obj = {};
     obj['words'] = this.getWordsUptoCurrentPosition();
     obj['wordsMetaData'] = this.getMetaDataOfWords(obj['words']);
@@ -271,7 +289,7 @@ export class AdvSearchLibComponent implements OnInit {
     return array;
   }
 
-  getMetaDataOfWord(word, type, dataType?:any) {
+  getMetaDataOfWord(word, type, dataType?: any) {
     let obj;
     if (type === 'value') {
       obj = { name: word, type: type, dataType: dataType }
@@ -365,7 +383,7 @@ export class AdvSearchLibComponent implements OnInit {
     return element;
   }
 
-  searchBasedOnWord(word, typOfAction?:any) {
+  searchBasedOnWord(word, typOfAction?: any) {
     if (word) {
       this.setListTypeBasedCurrentPosition(word, typOfAction)
     } else {
@@ -634,7 +652,7 @@ export class AdvSearchLibComponent implements OnInit {
     }
   }
 
-  emptyTheSearchModel(str?:any) {
+  emptyTheSearchModel(str?: any) {
     str = (str) ? str : '';
     if (this.searchObj[this.columnKey + str]) {
       this.searchObj[this.columnKey + str] = '';
@@ -725,7 +743,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   /** formates the date obj and update with search obj  */
-  formateDateObj(event, type?:any) {
+  formateDateObj(event, type?: any) {
     if (!type) {
       type = '';
     }
@@ -815,7 +833,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
   /**  allows only numaric only on key up */
-  allowNumaricsOnly(event, type?:any) {
+  allowNumaricsOnly(event, type?: any) {
     let value;
     if (!type) {
       type = '';
@@ -892,7 +910,8 @@ export class AdvSearchLibComponent implements OnInit {
         } else if (hasNextWord) {
           isValidSeachCriteria = this.checkWithnextWord(word, nextWord);
           isValidSeachCriteria = this.isValidOperators(isValidSeachCriteria, index, wordsMetaData);
-          isValidSeachCriteria = this.isValidColumn(isValidSeachCriteria, word)
+          isValidSeachCriteria = this.isValidColumn(isValidSeachCriteria, word);
+          isValidSeachCriteria = this.checkWithNullValue(isValidSeachCriteria, word, nextWord);
         }
       }
     });
@@ -901,14 +920,54 @@ export class AdvSearchLibComponent implements OnInit {
     this.statusOfSearchCriteria = isValidSeachCriteria;
   }
 
+  checkWithNullValue(isValidSeachCriteria, word, nextWord) {
+    if (isValidSeachCriteria && word.type === "arithmeticOperator") {
+      if (word.key === 'IS' || word.key === 'IS_NOT') {
+        isValidSeachCriteria = (nextWord.name === 'null') ? true : false;
+      } else {
+        isValidSeachCriteria = (nextWord.name !== 'null') ? true : false;
+      }
+    }
+    return isValidSeachCriteria;
+  }
 
   validateValue(word, isValidSeachCriteria) {
-    if (isValidSeachCriteria && word && word.type === 'value') {
-      const flag = this.jsonobj.restrictedKeys.some(str => {
-        const index = (word.name || '').indexOf(str);
-        return (index !== -1)
-      })
-      isValidSeachCriteria = !flag
+    if (word && word.type === 'value') {
+      if (isValidSeachCriteria && word && word.dataType === 'number') {
+        isValidSeachCriteria = !isNaN(word.name);
+      }
+      if (isValidSeachCriteria) {
+        const keys = this.jsonobj.restrictedKeys.keys;
+        const flag = keys.some(str => {
+          const index = (word.name || '').indexOf(str);
+          return (index !== -1)
+        })
+        isValidSeachCriteria = !flag;
+      }
+      if (isValidSeachCriteria) {
+        const arOperators = this.jsonobj.restrictedKeys.operators;
+        const flag = arOperators.some(str => {
+          return (word.name === str) ? true : false;
+        })
+        isValidSeachCriteria = !flag;
+      }
+      if (isValidSeachCriteria) {
+        if (word.name.startsWith('"')) {
+          isValidSeachCriteria = false;
+          if (word.name.endsWith('"')) {
+            isValidSeachCriteria = true;
+          }
+        }
+      }
+      if (isValidSeachCriteria) {
+        if (word.name.startsWith("'")) {
+          isValidSeachCriteria = false;
+          if (word.name.endsWith("'")) {
+            isValidSeachCriteria = true;
+          }
+        }
+      }
+
     }
     return isValidSeachCriteria;
   }
@@ -1021,7 +1080,7 @@ export class AdvSearchLibComponent implements OnInit {
   }
 
 
-  placeCaretAtEnd(str?:any) {
+  placeCaretAtEnd(str?: any) {
     let searchArea = this.getElementById('search-area');
     var CaretPos = 0;
     // IE Support
