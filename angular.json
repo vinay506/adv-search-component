@@ -37,6 +37,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "adv-search-lib"
+    }
+  },
+  "defaultProject": "adv-search-lib",
+  "cli": {
+    "analytics": "1fced236-7dfe-428a-b231-154060021306"
+  }
 }
